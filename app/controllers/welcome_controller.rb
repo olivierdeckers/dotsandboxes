@@ -1,7 +1,12 @@
 class WelcomeController < ApplicationController
 
   def index
-    
+
+  end
+
+  def join
+    @size = params[:id]
+    @id = params[:id]
   end
 
   def game

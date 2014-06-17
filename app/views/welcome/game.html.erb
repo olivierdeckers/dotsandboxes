@@ -1,6 +1,8 @@
 <h1>Dots and Boxes</h1>
 
+<%=javascript_include_tag 'game' %>
 <%=javascript_tag do%>
+    window.root_url = "<%= root_url %>";
     window.size = <%= @size %>;
     window.game_id = "<%= @game_id %>";
     window.player = "<%= @player %>";
@@ -9,5 +11,5 @@
 
 <canvas width="410" height="410" style="margin:0 auto; display:block;"></canvas>
 
-<label for="url" style="margin:30px auto 0px auto; width:500px; display:block;">Send this url to your friend:</label>
-<input type="text" id="url" style="margin:0 auto; width: 500px; display:block; "/>
+<h3>Send this link to your friend:</h3>
+<%= join_url(@game_id) %>

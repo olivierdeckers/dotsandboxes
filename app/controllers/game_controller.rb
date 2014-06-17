@@ -11,7 +11,7 @@ class GameController < WebsocketRails::BaseController
     game_id = message[:game_id]
     player = message[:player]
 
-    if !controller_store[:games][game_id]
+    unless controller_store[:games][game_id]
       controller_store[:games][game_id] = Game.new(Board.new(size))
     end
 

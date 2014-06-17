@@ -98,15 +98,24 @@ click = (event) ->
     return
 
   if board[tileY][tileX][direction] == true
-    return # todo user feedback
+    return
 
   my_turn = false
   filledTile = updateBoard(tileX, tileY, direction, true)
   if filledTile == true
     my_turn = true
 
-  dispatcher.trigger('move', {game_id: game_id, player: player, x: tileX, y: tileY, direction: direction}, (->), (msg) ->
-    console.error(msg)
+  dispatcher.trigger('move',
+    {
+      game_id: game_id,
+      player: player,
+      x: tileX,
+      y: tileY,
+      direction: direction
+    },
+    (->),
+    (msg) ->
+      console.error(msg)
   )
 
 ready = () ->
@@ -122,12 +131,19 @@ ready = () ->
   for _ in [1..size]
     row = []
     for _ in [1..size]
-      row.push({top: false, right: false, bottom: false, left: false, owner: undefined})
+      row.push(
+        {
+          top: false,
+          right: false,
+          bottom: false,
+          left: false,
+          owner: undefined
+        })
     board.push(row)
 
   render()
 
-  dispatcher = new WebSocketRails('localhost:3000/websocket')
+  dispatcher = new WebSocketRails(root_url.substring(7) + 'websocket')
 
   dispatcher.on_open = (data) ->
     console.log('Connection has been established: ', data)
@@ -145,10 +161,17 @@ ready = () ->
         moved(data.x, data.y, data.direction)
     )
 
-    dispatcher.trigger('connect', {game_id: game_id, size: size, player: player}, (data) ->
-      console.log('connected')
-    , (msg) ->
-      console.error(msg)
+    dispatcher.trigger('connect',
+      {
+        game_id: game_id,
+        size: size,
+        player: player
+      },
+      (data) ->
+        console.log('connected')
+      , (msg) ->
+        alert(msg.message)
+        window.location.href="/"
     )
 
 

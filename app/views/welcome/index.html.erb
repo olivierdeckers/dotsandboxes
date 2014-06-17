@@ -1,1 +1,8 @@
 <h1>Welcome to Dots and Boxes</h1>
+
+<h3>Create a new game</h3>
+<%=form_tag("/game/#{rand(1000000)}/", method: :get) do %>
+    <%=label_tag('player', 'Pick a username:')%>
+    <%=text_field_tag('player')%>
+    <%=submit_tag('Create')%>
+<% end %>
