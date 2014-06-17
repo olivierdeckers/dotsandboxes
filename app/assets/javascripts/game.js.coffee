@@ -100,9 +100,6 @@ click = (event) ->
   tileX = Math.floor(x)
   tileY = Math.floor(y)
 
-  if tileX < 0 || tileY < 0 || tileX >= size || tileY >= size
-    return #todo use neighbouring position for better UX
-
   direction = undefined
   if x % 1 < 0.2
     direction = "left"
@@ -115,6 +112,16 @@ click = (event) ->
 
   if direction == undefined
     return
+
+  if tileX < 0 || tileY < 0
+    return
+
+  if tileX >= size
+    tileX -= 1
+    direction = "right"
+  if tileY >= size
+    tileY -= 1
+    direction = "bottom"
 
   if board[tileY][tileX][direction] == true
     return
