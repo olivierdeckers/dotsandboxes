@@ -1,7 +1,0 @@
-<h1>Join a game</h1>
-
-<%=form_tag("/game/#{@id}", method: :get) do %>
-    <%=label_tag('player', 'Pick a username:')%>
-    <%=text_field_tag('player')%>
-    <%=submit_tag('Join')%>
-<% end %>

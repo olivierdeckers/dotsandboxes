@@ -1,0 +1,15 @@
+= javascript_include_tag 'game'
+:javascript
+  window.root_url = "#{root_url}";
+  window.size = #{@size};
+  window.game_id = "#{@game_id}";
+  window.player = "#{@player}";
+
+.container
+  .jumbotron
+    %h1 Dots and Boxes
+
+  %canvas.center-block{:width => '410', :height => '410'}
+
+  %h3 Send this link to your friend:
+  %p= join_url(@game_id)

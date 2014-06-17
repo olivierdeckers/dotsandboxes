@@ -2,6 +2,10 @@ source 'https://rubygems.org'
 
 gem 'websocket-rails'
 
+gem 'bootstrap-sass'
+
+gem 'haml'
+
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.0.3'
 
