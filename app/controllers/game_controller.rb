@@ -22,6 +22,7 @@ class GameController < WebsocketRails::BaseController
       first_player = true
     elsif game.player2 === nil
       game.player2 = player
+      WebsocketRails[game_id].trigger(:connected, {:player => game.player1, :first_player => true})
     else
       logger.debug 'Game already full'
       trigger_failure({:message => 'Game already full'})
