@@ -11,6 +11,10 @@ other_player = undefined
 
 
 render = () ->
+  ctx.clearRect(0, 0, 410, 410)
+  unless my_turn
+    ctx.fillStyle = "lightgrey"
+    ctx.fillRect(0, 0, 410, 410)
   for row,y in board
     for tile,x in row
       if tile.owner == true
@@ -104,6 +108,7 @@ click = (event) ->
   filledTile = updateBoard(tileX, tileY, direction, true)
   if filledTile == true
     my_turn = true
+  render()
 
   dispatcher.trigger('move',
     {
@@ -179,12 +184,14 @@ connected = (player, first_player) ->
   other_player = player
   if first_player == false
     my_turn = true
+  render()
 
 
 moved = (x, y, direction) ->
   filledTile = updateBoard(x, y, direction, false)
   if !filledTile
     my_turn = true
+  render()
 
 
 $(document).ready(ready)
