@@ -1,5 +1,7 @@
 DotsnBoxes::Application.routes.draw do
-  get "welcome/index"
+  root 'welcome#index'
+
+  get 'game/:id' => 'welcome#game', as: :game
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

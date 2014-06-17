@@ -5,7 +5,9 @@ tileWidth = undefined
 board = []
 my_turn = false
 dispatcher = undefined
-board_id = undefined
+game_id = undefined
+player = undefined
+other_player = undefined
 
 
 render = () ->
@@ -41,28 +43,30 @@ fillTile = (x, y, player) ->
     return true
   return false
 
+
 updateBoard = (x, y, dir, player) ->
+  filledTile = false
   if dir == "left"
     board[y][x].left = true
     if x > 0
       board[y][x-1].right = true
-      fillTile(x-1, y, player)
+      filledTile = filledTile || fillTile(x-1, y, player)
   else if dir == "top"
     board[y][x].top = true
     if y > 0
       board[y-1][x].bottom = true
-      fillTile(x, y-1, player)
+      filledTile = filledTile || fillTile(x, y-1, player)
   else if dir == "bottom"
     board[y][x].bottom = true
     if y < size-1
       board[y+1][x].top = true
-      fillTile(x, y+1, player)
+      filledTile = filledTile || fillTile(x, y+1, player)
   else if dir == "right"
     board[y][x].right = true
     if x < size-1
       board[y][x+1].left = true
-      fillTile(x+1, y, player)
-  filledTile = fillTile(x, y, player)
+      filledTile = filledTile || fillTile(x+1, y, player)
+  filledTile = filledTile || fillTile(x, y, player)
 
   render()
   return filledTile
@@ -101,7 +105,7 @@ click = (event) ->
   if filledTile == true
     my_turn = true
 
-  dispatcher.trigger('move', {board_id: board_id, x: tileX, y: tileY, direction: direction}, (->), (msg) ->
+  dispatcher.trigger('move', {game_id: game_id, player: player, x: tileX, y: tileY, direction: direction}, (->), (msg) ->
     console.error(msg)
   )
 
@@ -112,6 +116,8 @@ ready = () ->
 
   size = window.size
   tileWidth = 400 / size
+  game_id = window.game_id
+  player = window.player
 
   for _ in [1..size]
     row = []
@@ -126,20 +132,36 @@ ready = () ->
   dispatcher.on_open = (data) ->
     console.log('Connection has been established: ', data)
 
-    dispatcher.trigger('connect', {size: size}, (data) ->
+    channel = dispatcher.subscribe(game_id)
+
+    channel.bind('connected', (data) ->
+      console.log("connected: ", data)
+      if data.player != player
+        connected(data.player, data.first_player)
+    )
+    channel.bind('moved', (data) ->
+      if data.player != player
+        console.log("received move: ", data)
+        moved(data.x, data.y, data.direction)
+    )
+
+    dispatcher.trigger('connect', {game_id: game_id, size: size, player: player}, (data) ->
       console.log('connected')
-      board_id = data.board_id
-      my_turn = true
     , (msg) ->
       console.error(msg)
     )
 
-  dispatcher.bind('move', (data) ->
-    console.log("received move: ", data)
-    filledTile = updateBoard(data.x, data.y, data.direction, false)
-    if !filledTile
-      my_turn = true
-  )
+
+connected = (player, first_player) ->
+  other_player = player
+  if first_player == false
+    my_turn = true
+
+
+moved = (x, y, direction) ->
+  filledTile = updateBoard(x, y, direction, false)
+  if !filledTile
+    my_turn = true
 
 
 $(document).ready(ready)
