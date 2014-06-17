@@ -6,8 +6,10 @@ board = []
 my_turn = false
 dispatcher = undefined
 game_id = undefined
-player = undefined
-other_player = undefined
+player_name = undefined
+player_score = 0
+other_player_name = undefined
+other_player_score = 0
 
 
 render = () ->
@@ -44,6 +46,10 @@ fillTile = (x, y, player) ->
   tile = board[y][x]
   if tile.top && tile.bottom && tile.left && tile.right
     tile.owner = player
+    if player
+      player_score += 1
+    else
+      other_player_score += 1
     return true
   return false
 
@@ -54,25 +60,34 @@ updateBoard = (x, y, dir, player) ->
     board[y][x].left = true
     if x > 0
       board[y][x-1].right = true
-      filledTile = filledTile || fillTile(x-1, y, player)
+      filledTile = fillTile(x-1, y, player) || filledTile
   else if dir == "top"
     board[y][x].top = true
     if y > 0
       board[y-1][x].bottom = true
-      filledTile = filledTile || fillTile(x, y-1, player)
+      filledTile = fillTile(x, y-1, player) || filledTile
   else if dir == "bottom"
     board[y][x].bottom = true
     if y < size-1
       board[y+1][x].top = true
-      filledTile = filledTile || fillTile(x, y+1, player)
+      filledTile = fillTile(x, y+1, player) || filledTile
   else if dir == "right"
     board[y][x].right = true
     if x < size-1
       board[y][x+1].left = true
-      filledTile = filledTile || fillTile(x+1, y, player)
-  filledTile = filledTile || fillTile(x, y, player)
+      filledTile = fillTile(x+1, y, player) || filledTile
+  filledTile = fillTile(x, y, player) || filledTile
 
   render()
+
+  if player_score + other_player_score == size * size
+    if player_score > other_player_score
+      alert("#{player_name} won with #{player_score}-#{other_player_score}")
+    else if player_score < other_player_score
+      alert("#{other_player_name} won with #{other_player_score}-#{player_score}")
+    else
+      alert("Draw")
+
   return filledTile
 
 
@@ -131,7 +146,7 @@ ready = () ->
   size = window.size
   tileWidth = 400 / size
   game_id = window.game_id
-  player = window.player
+  player_name = window.player
 
   for _ in [1..size]
     row = []
@@ -157,11 +172,11 @@ ready = () ->
 
     channel.bind('connected', (data) ->
       console.log("connected: ", data)
-      if data.player != player
+      if data.player != player_name
         connected(data.player, data.first_player)
     )
     channel.bind('moved', (data) ->
-      if data.player != player
+      if data.player != player_name
         console.log("received move: ", data)
         moved(data.x, data.y, data.direction)
     )
@@ -181,7 +196,7 @@ ready = () ->
 
 
 connected = (player, first_player) ->
-  other_player = player
+  other_player_name = player
   if first_player == false
     my_turn = true
   render()
