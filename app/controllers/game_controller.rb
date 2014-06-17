@@ -27,15 +27,22 @@ class GameController < WebsocketRails::BaseController
     y = message[:y]
     direction = message[:direction]
 
-    board.move(x, y, direction, true)
+    player_filled_tile = board.move(x, y, direction, true)
 
-    x, y, dir = randomMove(board)
-    logger.debug("#{x}, #{y}, #{dir}")
-    board.move(x, y, dir, false)
+    if !player_filled_tile
+      we_filled_tile = true
+      while we_filled_tile
+        x, y, dir = randomMove(board)
+        logger.debug("#{x}, #{y}, #{dir}")
+        we_filled_tile = board.move(x, y, dir, false)
 
-    logger.debug "move: x: #{x}, y: #{y}, dir: #{dir}"
+        logger.debug "move: x: #{x}, y: #{y}, dir: #{dir}"
 
-    trigger_success({:x => x, :y => y, :direction => dir})
+        send_message :move, {:x => x, :y => y, :direction => dir}
+      end
+    end
+
+    trigger_success
   end
 
   def randomMove(board)

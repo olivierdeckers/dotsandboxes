@@ -38,6 +38,8 @@ fillTile = (x, y, player) ->
   tile = board[y][x]
   if tile.top && tile.bottom && tile.left && tile.right
     tile.owner = player
+    return true
+  return false
 
 updateBoard = (x, y, dir, player) ->
   if dir == "left"
@@ -60,9 +62,10 @@ updateBoard = (x, y, dir, player) ->
     if x < size-1
       board[y][x+1].left = true
       fillTile(x+1, y, player)
-  fillTile(x, y, player)
+  filledTile = fillTile(x, y, player)
 
   render()
+  return filledTile
 
 
 click = (event) ->
@@ -75,7 +78,7 @@ click = (event) ->
   tileY = Math.floor(y)
 
   if tileX < 0 || tileY < 0 || tileX >= size || tileY >= size
-    return
+    return #todo use neighbouring position for better UX
 
   direction = undefined
   if x % 1 < 0.2
@@ -87,13 +90,19 @@ click = (event) ->
   else if x % 1 > 0.8
     direction = "right"
 
-  my_turn = false
-  updateBoard(tileX, tileY, direction, true)
+  if direction == undefined
+    return
 
-  dispatcher.trigger('move', {board_id: board_id, x: tileX, y: tileY, direction: direction}, (data) ->
+  if board[tileY][tileX][direction] == true
+    return # todo user feedback
+
+  my_turn = false
+  filledTile = updateBoard(tileX, tileY, direction, true)
+  if filledTile == true
     my_turn = true
-    console.log("received move: ", data)
-    updateBoard(data.x, data.y, data.direction, false)
+
+  dispatcher.trigger('move', {board_id: board_id, x: tileX, y: tileY, direction: direction}, (->), (msg) ->
+    console.error(msg)
   )
 
 ready = () ->
@@ -121,7 +130,16 @@ ready = () ->
       console.log('connected')
       board_id = data.board_id
       my_turn = true
+    , (msg) ->
+      console.error(msg)
     )
+
+  dispatcher.bind('move', (data) ->
+    console.log("received move: ", data)
+    filledTile = updateBoard(data.x, data.y, data.direction, false)
+    if !filledTile
+      my_turn = true
+  )
 
 
 $(document).ready(ready)
