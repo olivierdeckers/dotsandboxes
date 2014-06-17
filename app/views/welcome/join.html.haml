@@ -1,12 +1,7 @@
-.container
-  .jumbotron
-    %h1 Dots and Boxes
-
-
-  .col-xs-6.col-xs-offset-3
-    %h1 Join a game
-    = form_tag("/game/#{@id}", method: :get) do
-      .form-group
-        = label_tag('player', 'Pick a username:')
-        = text_field_tag('player', '', {:class => 'form-control'})
-      = submit_tag('Join', {:class => 'btn btn-primary btn-lg'})
+.col-xs-6.col-xs-offset-3
+  %h1 Join a game
+  = form_tag("/game/#{@id}", method: :get) do
+    .form-group
+      = label_tag('player', 'Pick a username:')
+      = text_field_tag('player', '', {:class => 'form-control'})
+    = submit_tag('Join', {:class => 'btn btn-primary btn-lg'})

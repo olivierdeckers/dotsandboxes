@@ -1,23 +1,22 @@
-.container
-  .jumbotron
-    %h1 Welcome to Dots and Boxes
-    %p This is an implementation of the Dots and Boxes game using Rails and Websockets.
-    %p Challenge your friends to a game, or play against the AI.
+.jumbotron
+  %h1 Welcome to Dots and Boxes
+  %p This is an implementation of the Dots and Boxes game using Rails and Websockets.
+  %p Challenge your friends to a game, or play against the AI.
 
-  .row
-    .col-sm-5.col-sm-offset-1
-      %h3 Create a new multiplayer game
-      = form_tag("/game/#{rand(1000000)}/", method: :get) do
-        .form-group
-          = label_tag('player', 'Pick a username:')
-          = text_field_tag('player', '', {:class => 'form-control'})
-        = submit_tag('Create', {:class => 'btn btn-lg btn-primary center-block'})
+.row
+  .col-sm-5.col-sm-offset-1
+    %h3 Create a new multiplayer game
+    = form_tag("/game/#{rand(1000000)}/", method: :get) do
+      .form-group
+        = label_tag('player', 'Pick a username:')
+        = text_field_tag('player', '', {:class => 'form-control'})
+      = submit_tag('Create', {:class => 'btn btn-lg btn-primary center-block'})
 
-    .col-sm-5
-      %h3 Play a game against the AI
-      .form-group{:style => 'visibility:hidden;'}
-        %label dummy
-        %input{:class => 'form-control'}
-      .text-center
-        = link_to('Play', "/ai/#{rand(1000000)}?player=player", {:class => 'btn btn-lg btn-primary'})
+  .col-sm-5
+    %h3 Play a game against the AI
+    .form-group{:style => 'visibility:hidden;'}
+      %label dummy
+      %input{:class => 'form-control'}
+    .text-center
+      = link_to('Play', "/ai/#{rand(1000000)}?player=player", {:class => 'btn btn-lg btn-primary'})
 
