@@ -14,4 +14,10 @@ class WelcomeController < ApplicationController
     @game_id = params[:id]
     @player = params[:player]
   end
+
+  def ai_game
+    @size = params[:size] || 4
+    @game_id = params[:id]
+    @player = params[:player]
+  end
 end

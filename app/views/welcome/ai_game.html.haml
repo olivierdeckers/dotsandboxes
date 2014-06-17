@@ -1,0 +1,13 @@
+= javascript_include_tag 'game'
+= javascript_include_tag 'ai'
+:javascript
+  window.root_url = "#{root_url}";
+  window.size = #{@size};
+  window.game_id = "#{@game_id}";
+  window.player = "#{@player}";
+
+.container
+  .jumbotron
+    %h1 Dots and Boxes
+
+  %canvas.center-block{:width => '410', :height => '410'}

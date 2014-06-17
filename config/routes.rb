@@ -3,6 +3,7 @@ DotsnBoxes::Application.routes.draw do
 
   get 'game/:id' => 'welcome#game', as: :game
   get 'join/:id' => 'welcome#join', as: :join
+  get 'ai/:id' => 'welcome#ai_game', as: :ai_game
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
